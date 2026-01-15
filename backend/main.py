@@ -55,9 +55,11 @@ app.add_middleware(
 @app.post("/analyze", response_model=Result)
 async def analyze(file: UploadFile = File(...)):
     audio_bytes = await file.read()
+    print(f"[DEBUG] Received file: {file.filename}, size: {len(audio_bytes)} bytes")
     result = main(audio_bytes)
+    print(f"[DEBUG] Result: {result.emotion1.name if result else 'None'}")
 
     if result is None:
         raise HTTPException(status_code=400, detail="Unable to detect mood from audio")
-    
+
     return result

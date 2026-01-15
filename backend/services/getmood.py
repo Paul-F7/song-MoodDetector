@@ -17,18 +17,27 @@ class EmotionResult(BaseModel):
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 valence_model = joblib.load(os.path.join(BASE_DIR, 'model', 'valence_model.joblib'))
 arousal_model = joblib.load(os.path.join(BASE_DIR, 'model', 'arousal_model.joblib'))
+scaler = joblib.load(os.path.join(BASE_DIR, 'model', 'scaler.joblib'))
 COORDS = np.array(list(EMOTION_COORDINATES.values()))
 LABELS = np.array(list(EMOTION_COORDINATES.keys()))
 
 def get_mood(features):
     if features is None:
         return None
-    
-    valence = valence_model.predict(features)[0]
-    arousal = arousal_model.predict(features)[0]
 
-    v = max(0.0, min(1.0, valence))
-    a = max(0.0, min(1.0, arousal))
+    # Scale features using the same scaler from training
+    features_scaled = scaler.transform(features)
+
+    valence = valence_model.predict(features_scaled)[0]
+    arousal = arousal_model.predict(features_scaled)[0]
+    print(f"[DEBUG] Raw predictions - valence: {valence:.3f}, arousal: {arousal:.3f}")
+
+    # DEAM dataset uses 1-9 scale, normalize to 0-1
+    v = (valence - 1) / 8
+    a = (arousal - 1) / 8
+    print(f"[DEBUG] Normalized - v: {v:.3f}, a: {a:.3f}")
+    v = max(0.0, min(1.0, v))
+    a = max(0.0, min(1.0, a))
 
     # Vector Distance Calculation
     input_point = np.array([v, a])

@@ -74,6 +74,8 @@ export function useFileUpload(): UseFileUploadReturn {
     if (files && files.length > 0) {
       processFile(files[0]);
     }
+    // Reset input so the same file can be selected again
+    e.target.value = '';
   }, [processFile]);
 
   const resetResult = useCallback(() => {
