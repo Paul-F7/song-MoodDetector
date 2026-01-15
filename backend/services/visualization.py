@@ -61,7 +61,7 @@ def visualize_emotion(valence: float, arousal: float) -> BytesIO:
 
     # Draw text label with background
     try:
-        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 36)
+        font = ImageFont.load_default(size=36)
     except:
         font = ImageFont.load_default()
 
