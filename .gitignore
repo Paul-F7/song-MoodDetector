@@ -1,0 +1,23 @@
+# Virtual environment
+venv/
+
+# Data files
+dataset/
+*.npy
+*.csv
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Node modules (frontend)
+node_modules/
