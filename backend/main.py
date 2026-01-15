@@ -44,6 +44,10 @@ def main(audio_file):
 
 app = FastAPI()
 
+@app.get("/")
+def health():
+    return {"status": "ok"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
