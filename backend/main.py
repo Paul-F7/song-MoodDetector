@@ -3,6 +3,7 @@ from services.getmood import get_mood
 from services.visualization import visualize_emotion
 from services.organizedata import organize_data, Emotion
 from pydantic import BaseModel
+from fastapi import FastAPI, File, HTTPException, UploadFile
 
 class Result(BaseModel):
     image: bytes
@@ -39,5 +40,14 @@ def main(audio_file):
         emotion1=organize_data(mood.emotion1, mood.percentage1)
     )
 
+app = FastAPI()
 
-        
+@app.post("/analyze", response_model=Result)
+async def analyze(file: UploadFile = File(...)):
+    audio_bytes = await file.read()
+    result = main(audio_bytes)
+
+    if result is None:
+        raise HTTPException(status_code=400, detail="Unable to detect mood from audio")
+
+    return result
