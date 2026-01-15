@@ -1,6 +1,6 @@
 import json
 from pydantic import BaseModel
-from ..constants.constants import text
+from constants.constants import text
 
 class Emotion(BaseModel):
     name: str

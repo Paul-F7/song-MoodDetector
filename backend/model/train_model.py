@@ -24,7 +24,10 @@ data = features.merge(annotations, on='song_id')
 print(f"Matched {len(data)} songs with annotations")
 
 #  Prepare features and targets
-feature_cols = [col for col in data.columns if col not in ['song_id', 'valence_mean', 'valence_std', 'arousal_mean', 'arousal_std']]
+# Only use audio features (from features CSV), exclude all annotation columns
+# Note: valence_std and arousal_std are still used below for sample weighting (confidence)
+audio_feature_cols = [col for col in features.columns if col != 'song_id']
+feature_cols = audio_feature_cols
 
 X = data[feature_cols] 
 y_valence = data['valence_mean']

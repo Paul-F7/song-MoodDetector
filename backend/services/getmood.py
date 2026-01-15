@@ -1,7 +1,8 @@
+import os
 import joblib
 import numpy as np
 from pydantic import BaseModel
-from ..constants.constants import EMOTION_COORDINATES
+from constants.constants import EMOTION_COORDINATES
 
 class EmotionResult(BaseModel):
     valence: float
@@ -13,8 +14,9 @@ class EmotionResult(BaseModel):
     emotion3: str
     percentage3: float
 
-valence_model = joblib.load('../model/valence_model.joblib')
-arousal_model = joblib.load('../model/arousal_model.joblib')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+valence_model = joblib.load(os.path.join(BASE_DIR, 'model', 'valence_model.joblib'))
+arousal_model = joblib.load(os.path.join(BASE_DIR, 'model', 'arousal_model.joblib'))
 COORDS = np.array(list(EMOTION_COORDINATES.values()))
 LABELS = np.array(list(EMOTION_COORDINATES.keys()))
 
@@ -42,8 +44,8 @@ def get_mood(features):
 
     top_3_labels = LABELS[top_3_idx]
     return EmotionResult(
-        valence=valence,
-        arousal=arousal,
+        valence=v,
+        arousal=a,
         emotion1=top_3_labels[0], percentage1=round(percentages[0], 2),
         emotion2=top_3_labels[1], percentage2=round(percentages[1], 2),
         emotion3=top_3_labels[2], percentage3=round(percentages[2], 2)
