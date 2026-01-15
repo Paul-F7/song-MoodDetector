@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://song-mooddetector-production.up.railway.app';
 
 export interface Emotion {
   name: string;
