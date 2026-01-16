@@ -83,7 +83,7 @@ Upload an MP3, get its emotions and a visualization of where it sits on valence-
 
 ## Visualization
 
-![Valence-Arousal Emotion Space](backend/assets/valence_arousal_base.png)
+<img src="backend/assets/valence_arousal_base.png" width="400">
 
 - Base graph generated with **matplotlib**:
   - Custom RGB gradient background (red/blue/green/yellow for each quadrant)
