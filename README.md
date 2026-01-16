@@ -1,8 +1,8 @@
 # Feelify — Music Emotion Recognition
 
-Upload an MP3, get back where it sits on the valence-arousal emotion space with the closest matching emotions.
+Upload an MP3, get its emotions and a visualization of where it sits on valence-arousal emotion space.
 
-**[Live Demo](https://song-mooddetector-production.up.railway.app)**
+**[Try it Out](https://song-mood-detector.vercel.app)**
 
 ![Python](https://img.shields.io/badge/Python-3.14-blue)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.8-orange)
