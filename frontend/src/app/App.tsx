@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useFileUpload } from '../hooks/useFileUpload';
 import ResultsScreen from './ResultsScreen';
+import { warmup } from '../services/api';
 
 export default function App() {
+  useEffect(() => { warmup(); }, []);
+
   const {
     isDragging,
     isLoading,

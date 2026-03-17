@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://song-mooddetector-production.up.railway.app';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://pfom-songmooddetector.hf.space';
 const SLICE_DURATION = 45; // seconds, must match backend duration param
 
 function encodeWav(samples: Float32Array, sampleRate: number): Blob {
@@ -42,13 +42,15 @@ async function sliceAudio(file: File): Promise<Blob> {
 
   const { sampleRate, numberOfChannels, length } = audioBuffer;
   const numSamples = Math.min(length, Math.floor(SLICE_DURATION * sampleRate));
+  const maxStart = length - numSamples;
+  const startSample = maxStart > 0 ? Math.floor(Math.random() * maxStart) : 0;
 
   // Mix down to mono
   const mono = new Float32Array(numSamples);
   for (let ch = 0; ch < numberOfChannels; ch++) {
     const channelData = audioBuffer.getChannelData(ch);
     for (let i = 0; i < numSamples; i++) {
-      mono[i] += channelData[i] / numberOfChannels;
+      mono[i] += channelData[startSample + i] / numberOfChannels;
     }
   }
 
@@ -67,6 +69,10 @@ export interface AnalyzeResult {
   emotion1: Emotion;
   emotion2?: Emotion;
   emotion3?: Emotion;
+}
+
+export function warmup(): void {
+  fetch(`${API_BASE_URL}/`).catch(() => {});
 }
 
 export async function analyzeAudio(file: File): Promise<AnalyzeResult> {
