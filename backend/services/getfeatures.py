@@ -1,15 +1,25 @@
 import librosa
+import soundfile as sf
 import numpy as np
 from io import BytesIO
 
 
-# extracts features from song, same features that were used 
+# extracts features from song, same features that were used
 def get_features(audio_file, duration=45, sr=22050):
     try:
         if isinstance(audio_file, bytes):
             audio_file = BytesIO(audio_file)
 
-        y, sr = librosa.load(audio_file, duration=duration, sr=sr, mono=True)
+        with sf.SoundFile(audio_file) as f:
+            file_sr = f.samplerate
+            frames_to_read = min(len(f), int(duration * file_sr))
+            y = f.read(frames=frames_to_read, dtype='float32', always_2d=False)
+
+        if y.ndim > 1:
+            y = np.mean(y, axis=1)
+
+        if file_sr != sr:
+            y = librosa.resample(y, orig_sr=file_sr, target_sr=sr)
 
         if len(y) == 0 or np.max(np.abs(y)) < 0.001:
             return None

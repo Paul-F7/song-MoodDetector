@@ -7,3 +7,4 @@ scikit-learn==1.8.0
 joblib==1.4.2
 pydantic==2.10.6
 pillow==11.1.0
+soundfile==0.13.1

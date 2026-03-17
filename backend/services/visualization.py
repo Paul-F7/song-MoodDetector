@@ -5,6 +5,9 @@ from io import BytesIO
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_GRAPH_PATH = os.path.join(BASE_DIR, 'assets', 'valence_arousal_base.png')
+OUTPUT_SIZE = 800  # resize before encoding — original is 2379x2379
+
+_base_graph = Image.open(BASE_GRAPH_PATH).convert('RGBA')
 
 # These define the plot area within the image (in pixels)
 # Image is 2379x2379, center (0.5, 0.5) is at pixel (1050, 1237)
@@ -14,7 +17,7 @@ PLOT_TOP = 312
 PLOT_BOTTOM = 2162
 
 def visualize_emotion(valence: float, arousal: float) -> BytesIO:
-    img = Image.open(BASE_GRAPH_PATH).convert('RGBA')
+    img = _base_graph.copy()
     draw = ImageDraw.Draw(img)
 
     # Map valence (0-1) to x pixel coordinate
@@ -78,6 +81,6 @@ def visualize_emotion(valence: float, arousal: float) -> BytesIO:
     draw.text((text_x, text_y), text, fill='darkred', font=font, anchor="mm")
 
     buf = BytesIO()
-    img.save(buf, format='PNG')
+    img.resize((OUTPUT_SIZE, OUTPUT_SIZE), Image.LANCZOS).save(buf, format='PNG')
     buf.seek(0)
     return buf
