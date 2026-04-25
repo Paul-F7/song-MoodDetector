@@ -119,6 +119,20 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@keyframes song-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+.song-marquee-track {
+  animation: song-marquee 40s linear infinite;
+  will-change: transform;
+}
+
+.song-marquee:hover .song-marquee-track {
+  animation-play-state: paused;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

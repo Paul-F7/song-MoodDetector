@@ -13,6 +13,7 @@ interface UseFileUploadReturn {
   handleClick: () => void;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   resetResult: () => void;
+  showResult: (result: AnalyzeResult) => void;
 }
 
 export function useFileUpload(): UseFileUploadReturn {
@@ -83,6 +84,11 @@ export function useFileUpload(): UseFileUploadReturn {
     setError(null);
   }, []);
 
+  const showResult = useCallback((r: AnalyzeResult) => {
+    setError(null);
+    setResult(r);
+  }, []);
+
   return {
     isDragging,
     isLoading,
@@ -95,5 +101,6 @@ export function useFileUpload(): UseFileUploadReturn {
     handleClick,
     handleFileChange,
     resetResult,
+    showResult,
   };
 }

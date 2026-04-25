@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useFileUpload } from '../hooks/useFileUpload';
 import ResultsScreen from './ResultsScreen';
+import SongCarousel from './SongCarousel';
 import { warmup } from '../services/api';
+import { buildResultForSong, SongExample } from '../services/songExamples';
 
 export default function App() {
   useEffect(() => { warmup(); }, []);
@@ -19,7 +21,12 @@ export default function App() {
     handleClick,
     handleFileChange,
     resetResult,
+    showResult,
   } = useFileUpload();
+
+  const handleSongSelect = (song: SongExample) => {
+    showResult(buildResultForSong(song));
+  };
 
   if (result) {
     return <ResultsScreen result={result} onBack={resetResult} />;
@@ -113,7 +120,7 @@ export default function App() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`relative cursor-pointer bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 border-2 ${
+              className={`relative cursor-pointer overflow-hidden bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 border-2 ${
                 isDragging ? 'border-purple-300 scale-105' : 'border-purple-500/50'
               } rounded-3xl p-12 hover:border-purple-400 transition-all duration-300 backdrop-blur-xl`}
               style={{ boxShadow: isDragging ? '0 0 60px rgba(168, 85, 247, 0.6)' : '0 0 30px rgba(168, 85, 247, 0.3)' }}
@@ -180,17 +187,8 @@ export default function App() {
           )}
         </motion.div>
 
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-16"
-        >
-          <div className="text-7xl mb-4">👆</div>
-          <p className="text-gray-400 text-2xl">
-            Upload a song to get started! 🚀
-          </p>
-        </motion.div>
+        {/* Song Examples Carousel */}
+        <SongCarousel onSelect={handleSongSelect} />
       </div>
     </div>
   );

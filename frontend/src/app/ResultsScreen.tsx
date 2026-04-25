@@ -8,9 +8,13 @@ interface ResultsScreenProps {
 
 export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
   const emotion = result.emotion1;
-  const imageBase64 = typeof result.image === 'string'
-    ? result.image
-    : btoa(String.fromCharCode(...new Uint8Array(result.image as unknown as ArrayBuffer)));
+  const imageSrc = result.imageUrl
+    ? result.imageUrl
+    : `data:image/png;base64,${
+        typeof result.image === 'string'
+          ? result.image
+          : btoa(String.fromCharCode(...new Uint8Array(result.image as unknown as ArrayBuffer)))
+      }`;
 
   return (
     <div className="min-h-screen bg-black relative overflow-y-auto overflow-x-hidden">
@@ -85,7 +89,7 @@ export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
               style={{ boxShadow: '0 0 40px rgba(168, 85, 247, 0.3)' }}
             >
               <img
-                src={`data:image/png;base64,${imageBase64}`}
+                src={imageSrc}
                 alt="Emotion plot"
                 className="w-full rounded-2xl"
               />

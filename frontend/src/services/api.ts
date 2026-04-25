@@ -66,6 +66,7 @@ export interface Emotion {
 
 export interface AnalyzeResult {
   image: string;
+  imageUrl?: string;
   emotion1: Emotion;
   emotion2?: Emotion;
   emotion3?: Emotion;
