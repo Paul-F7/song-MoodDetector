@@ -1,12 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useFileUpload } from '../hooks/useFileUpload';
 import ResultsScreen from './ResultsScreen';
 import SongCarousel from './SongCarousel';
+import SongResultsScreen from './SongResultsScreen';
+import type { Song } from '../data/songs';
 import { warmup } from '../services/api';
 
 export default function App() {
   useEffect(() => { warmup(); }, []);
+
+  const [selectedSong, setSelectedSong] = useState<{ song: Song; coverUrl: string | null } | null>(null);
 
   const {
     isDragging,
@@ -24,6 +28,16 @@ export default function App() {
 
   if (result) {
     return <ResultsScreen result={result} onBack={resetResult} />;
+  }
+
+  if (selectedSong) {
+    return (
+      <SongResultsScreen
+        song={selectedSong.song}
+        coverUrl={selectedSong.coverUrl}
+        onBack={() => setSelectedSong(null)}
+      />
+    );
   }
 
   return (
@@ -195,7 +209,9 @@ export default function App() {
 
       {/* Song Carousel — full width */}
       <div className="w-full relative z-10 pb-16">
-        <SongCarousel />
+        <SongCarousel
+          onSelectSong={(song, coverUrl) => setSelectedSong({ song, coverUrl })}
+        />
       </div>
     </div>
   );
