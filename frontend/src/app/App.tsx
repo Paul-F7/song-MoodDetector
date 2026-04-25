@@ -29,42 +29,11 @@ export default function App() {
   const songResult: ResultsScreenData | null = useMemo(() => {
     if (!selectedSong) return null;
     const { song, coverUrl } = selectedSong;
-    const points = [
-      {
-        valence: song.primaryMood.valence,
-        arousal: song.primaryMood.arousal,
-        label: song.primaryMood.name,
-        emoji: song.primaryMood.emoji,
-        color: song.primaryMood.accentColor,
-        size: 'large' as const,
-      },
-      ...(song.secondaryMood
-        ? [{
-            valence: song.secondaryMood.valence,
-            arousal: song.secondaryMood.arousal,
-            label: song.secondaryMood.name,
-            emoji: song.secondaryMood.emoji,
-            color: song.secondaryMood.accentColor,
-            size: 'small' as const,
-          }]
-        : []),
-      ...(song.tertiaryMood
-        ? [{
-            valence: song.tertiaryMood.valence,
-            arousal: song.tertiaryMood.arousal,
-            label: song.tertiaryMood.name,
-            emoji: song.tertiaryMood.emoji,
-            color: song.tertiaryMood.accentColor,
-            size: 'small' as const,
-          }]
-        : []),
-    ];
-
     return {
       emotion1: song.primaryMood,
       emotion2: song.secondaryMood,
       emotion3: song.tertiaryMood,
-      plotNode: <MoodPlot points={points} />,
+      plotNode: <MoodPlot valence={song.primaryMood.valence} arousal={song.primaryMood.arousal} />,
       song: {
         title: song.title,
         artist: song.artist,
