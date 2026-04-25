@@ -1,16 +1,42 @@
+import { ReactNode, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AnalyzeResult } from '../services/api';
 
+export interface ResultsSongMeta {
+  title: string;
+  artist: string;
+  year: number;
+  genre: string;
+  coverUrl: string | null;
+  fallbackEmoji: string;
+  coverGradient: string;
+}
+
+export interface ResultsScreenData extends Omit<AnalyzeResult, 'image'> {
+  image?: string;
+  plotNode?: ReactNode;
+  song?: ResultsSongMeta;
+}
+
 interface ResultsScreenProps {
-  result: AnalyzeResult;
+  result: ResultsScreenData;
   onBack: () => void;
 }
 
 export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
   const emotion = result.emotion1;
-  const imageBase64 = typeof result.image === 'string'
-    ? result.image
-    : btoa(String.fromCharCode(...new Uint8Array(result.image as unknown as ArrayBuffer)));
+  const [coverLoaded, setCoverLoaded] = useState(false);
+
+  useEffect(() => {
+    setCoverLoaded(false);
+  }, [result.song?.coverUrl]);
+
+  const imageBase64 =
+    typeof result.image === 'string'
+      ? result.image
+      : result.image
+        ? btoa(String.fromCharCode(...new Uint8Array(result.image as unknown as ArrayBuffer)))
+        : null;
 
   return (
     <div className="min-h-screen bg-black relative overflow-y-auto overflow-x-hidden">
@@ -41,7 +67,7 @@ export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
           className="mb-8 flex items-center gap-2 text-gray-400 hover:text-white transition-colors cursor-pointer"
         >
           <span className="text-2xl">←</span>
-          <span>Analyze another song</span>
+          <span>{result.song ? 'Back to songs' : 'Analyze another song'}</span>
         </motion.button>
 
         <div className="flex flex-col lg:flex-row gap-12 items-center">
@@ -52,6 +78,37 @@ export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
             transition={{ delay: 0.2 }}
             className="flex-1 text-center lg:text-left"
           >
+            {/* Optional song metadata header */}
+            {result.song && (
+              <div className="mb-6 flex items-center gap-4 justify-center lg:justify-start">
+                <div
+                  className={`relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden bg-gradient-to-br ${result.song.coverGradient} border border-white/10`}
+                >
+                  {result.song.coverUrl && (
+                    <img
+                      src={result.song.coverUrl}
+                      alt={`${result.song.title} cover`}
+                      onLoad={() => setCoverLoaded(true)}
+                      onError={() => setCoverLoaded(false)}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                        coverLoaded ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  )}
+                  {!coverLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center text-3xl">
+                      {result.song.fallbackEmoji}
+                    </div>
+                  )}
+                </div>
+                <div className="text-left">
+                  <p className="text-white font-bold text-lg leading-tight">{result.song.title}</p>
+                  <p className="text-gray-300 text-sm">{result.song.artist}</p>
+                  <p className="text-gray-500 text-xs">{result.song.year} · {result.song.genre}</p>
+                </div>
+              </div>
+            )}
+
             <motion.div
               className="text-9xl mb-6"
               animate={{ scale: [1, 1.1, 1] }}
@@ -74,7 +131,7 @@ export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
             </p>
           </motion.div>
 
-          {/* Plot Image */}
+          {/* Plot — base64 image OR custom React node */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -84,11 +141,15 @@ export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
             <div className="bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 rounded-3xl p-4 backdrop-blur-xl border border-purple-500/30"
               style={{ boxShadow: '0 0 40px rgba(168, 85, 247, 0.3)' }}
             >
-              <img
-                src={`data:image/png;base64,${imageBase64}`}
-                alt="Emotion plot"
-                className="w-full rounded-2xl"
-              />
+              {imageBase64 ? (
+                <img
+                  src={`data:image/png;base64,${imageBase64}`}
+                  alt="Emotion plot"
+                  className="w-full rounded-2xl"
+                />
+              ) : result.plotNode ? (
+                <div className="rounded-2xl overflow-hidden">{result.plotNode}</div>
+              ) : null}
             </div>
           </motion.div>
         </div>

@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useFileUpload } from '../hooks/useFileUpload';
-import ResultsScreen from './ResultsScreen';
+import ResultsScreen, { type ResultsScreenData } from './ResultsScreen';
 import SongCarousel from './SongCarousel';
-import SongResultsScreen from './SongResultsScreen';
+import MoodPlot from './MoodPlot';
 import type { Song } from '../data/songs';
 import { warmup } from '../services/api';
 
@@ -26,18 +26,63 @@ export default function App() {
     resetResult,
   } = useFileUpload();
 
+  const songResult: ResultsScreenData | null = useMemo(() => {
+    if (!selectedSong) return null;
+    const { song, coverUrl } = selectedSong;
+    const points = [
+      {
+        valence: song.primaryMood.valence,
+        arousal: song.primaryMood.arousal,
+        label: song.primaryMood.name,
+        emoji: song.primaryMood.emoji,
+        color: song.primaryMood.accentColor,
+        size: 'large' as const,
+      },
+      ...(song.secondaryMood
+        ? [{
+            valence: song.secondaryMood.valence,
+            arousal: song.secondaryMood.arousal,
+            label: song.secondaryMood.name,
+            emoji: song.secondaryMood.emoji,
+            color: song.secondaryMood.accentColor,
+            size: 'small' as const,
+          }]
+        : []),
+      ...(song.tertiaryMood
+        ? [{
+            valence: song.tertiaryMood.valence,
+            arousal: song.tertiaryMood.arousal,
+            label: song.tertiaryMood.name,
+            emoji: song.tertiaryMood.emoji,
+            color: song.tertiaryMood.accentColor,
+            size: 'small' as const,
+          }]
+        : []),
+    ];
+
+    return {
+      emotion1: song.primaryMood,
+      emotion2: song.secondaryMood,
+      emotion3: song.tertiaryMood,
+      plotNode: <MoodPlot points={points} />,
+      song: {
+        title: song.title,
+        artist: song.artist,
+        year: song.year,
+        genre: song.genre,
+        coverUrl,
+        fallbackEmoji: song.fallbackEmoji,
+        coverGradient: song.coverGradient,
+      },
+    };
+  }, [selectedSong]);
+
   if (result) {
     return <ResultsScreen result={result} onBack={resetResult} />;
   }
 
-  if (selectedSong) {
-    return (
-      <SongResultsScreen
-        song={selectedSong.song}
-        coverUrl={selectedSong.coverUrl}
-        onBack={() => setSelectedSong(null)}
-      />
-    );
+  if (songResult) {
+    return <ResultsScreen result={songResult} onBack={() => setSelectedSong(null)} />;
   }
 
   return (
