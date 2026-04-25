@@ -14,6 +14,7 @@ export interface ResultsSongMeta {
 
 export interface ResultsScreenData extends Omit<AnalyzeResult, 'image'> {
   image?: string;
+  imageUrl?: string;
   plotNode?: ReactNode;
   song?: ResultsSongMeta;
 }
@@ -144,6 +145,12 @@ export default function ResultsScreen({ result, onBack }: ResultsScreenProps) {
               {imageBase64 ? (
                 <img
                   src={`data:image/png;base64,${imageBase64}`}
+                  alt="Emotion plot"
+                  className="w-full rounded-2xl"
+                />
+              ) : result.imageUrl ? (
+                <img
+                  src={result.imageUrl}
                   alt="Emotion plot"
                   className="w-full rounded-2xl"
                 />

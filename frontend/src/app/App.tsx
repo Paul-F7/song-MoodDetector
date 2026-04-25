@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useFileUpload } from '../hooks/useFileUpload';
 import ResultsScreen, { type ResultsScreenData } from './ResultsScreen';
 import SongCarousel from './SongCarousel';
-import MoodPlot from './MoodPlot';
 import type { Song } from '../data/songs';
 import { warmup } from '../services/api';
 
@@ -33,7 +32,7 @@ export default function App() {
       emotion1: song.primaryMood,
       emotion2: song.secondaryMood,
       emotion3: song.tertiaryMood,
-      plotNode: <MoodPlot valence={song.primaryMood.valence} arousal={song.primaryMood.arousal} />,
+      imageUrl: `/song-plots/song-${song.id}.png`,
       song: {
         title: song.title,
         artist: song.artist,
