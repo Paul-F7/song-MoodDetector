@@ -1,2 +1,15 @@
 @import './tailwind.css';
 @import './theme.css';
+
+@keyframes belt-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.belt-animation {
+  animation: belt-scroll 38s linear infinite;
+}
+
+.belt-paused {
+  animation-play-state: paused;
+}

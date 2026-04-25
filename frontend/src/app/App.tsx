@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useFileUpload } from '../hooks/useFileUpload';
 import ResultsScreen from './ResultsScreen';
+import SongCarousel from './SongCarousel';
 import { warmup } from '../services/api';
 
 export default function App() {
@@ -26,7 +27,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-black flex flex-col items-center p-4 pt-8 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0">
         <motion.div
@@ -69,7 +70,7 @@ export default function App() {
         ))}
       </div>
 
-      <div className="w-full max-w-2xl relative z-10">
+      <div className="w-full max-w-2xl relative z-10 flex-shrink-0">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -184,13 +185,17 @@ export default function App() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-16"
+          className="text-center py-8"
         >
-          <div className="text-7xl mb-4">👆</div>
-          <p className="text-gray-400 text-2xl">
-            Upload a song to get started! 🚀
+          <p className="text-gray-500 text-lg">
+            or explore moods below ↓
           </p>
         </motion.div>
+      </div>
+
+      {/* Song Carousel — full width */}
+      <div className="w-full relative z-10 pb-16">
+        <SongCarousel />
       </div>
     </div>
   );
